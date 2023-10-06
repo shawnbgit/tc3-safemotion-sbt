@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <project xmlns="http://www.plcopen.org/xml/tc6_0200">
-  <fileHeader companyName="Beckhoff Automation GmbH" productName="TwinCAT PLC Control" productVersion="3.5.13.21" creationDateTime="2023-09-22T15:58:06.0575954" />
-  <contentHeader name="PLC1" modificationDateTime="2023-09-22T15:58:06.0625898">
+  <fileHeader companyName="Beckhoff Automation GmbH" productName="TwinCAT PLC Control" productVersion="3.5.13.21" creationDateTime="2023-10-06T10:55:09.0122341" />
+  <contentHeader name="PLC1" modificationDateTime="2023-10-06T10:55:09.0162327">
     <coordinateInfo>
       <fbd>
         <scaling x="1" y="1" />
@@ -40,6 +40,11 @@
                 <BOOL />
               </type>
             </variable>
+            <variable name="enableTest">
+              <type>
+                <BOOL />
+              </type>
+            </variable>
             <variable name="fbBrakeTest">
               <type>
                 <derived name="FB_CoEAX8000BrakeTest" />
@@ -48,11 +53,6 @@
             <variable name="fbBrakeCtrl">
               <type>
                 <derived name="FB_CoEAX8000BrakeControl" />
-              </type>
-            </variable>
-            <variable name="enableBrakeTest">
-              <type>
-                <BOOL />
               </type>
             </variable>
             <variable name="fbMoveAbs">
@@ -85,11 +85,6 @@
                 <INT />
               </type>
             </variable>
-            <variable name="enableTest">
-              <type>
-                <BOOL />
-              </type>
-            </variable>
             <variable name="enableMove">
               <type>
                 <BOOL />
@@ -103,6 +98,11 @@
             <variable name="currentIq" address="%I*">
               <type>
                 <DINT />
+              </type>
+            </variable>
+            <variable name="enableBrakeTest">
+              <type>
+                <BOOL />
               </type>
             </variable>
           </localVars>
@@ -136,9 +136,10 @@ fbBrakeTest(
 	Axis:= ax1, 
 	Execute:= enableBrakeTest, 
 	Succeeded:= safety.SBT_Valid_PLC,
-	Torque:= 0.17, // will vary depending on motor
-	VelocityLimit:= 150);
-
+	Torque:= 0.17, 			// will vary depending on motor - value is torque that should be effective (Nm)
+	VelocityLimit:= 150,	// velocity limit to prevent uncontrolled acceleration in torque mode
+	Timeout := T#10S);
+	
 fbMoveAbs( Axis := Ax1, Execute := enableMove);
 fbWriteDriveOpMode(Axis:= ax1, Execute:= setDriveOpMode);
 fbReadDriveOpMode(Axis := ax1, Execute := readDriveOpMode);
